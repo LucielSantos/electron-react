@@ -16,6 +16,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import Store from 'electron-store';
 
 export default class AppUpdater {
   constructor() {
@@ -135,3 +136,25 @@ app
     });
   })
   .catch(console.log);
+
+// Electron store config
+const store = new Store();
+
+ipcMain.on('electron-store-get', (event, val) => {
+  console.log('electron-store-get');
+  // console.log(event);
+  console.log(val);
+  console.log(store.get(val));
+
+  event.returnValue = store.get(val);
+
+  return store.get(val);
+});
+
+ipcMain.on('electron-store-set', async (event, key, val) => {
+  console.log('electron-store-set');
+  // console.log(event);
+  console.log(key);
+  console.log(val);
+  store.set(key, val);
+});

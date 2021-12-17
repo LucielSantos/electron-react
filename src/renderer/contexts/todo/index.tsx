@@ -1,4 +1,4 @@
-import { createContext, useCallback, useState } from 'react';
+import { createContext, useCallback, useEffect, useState } from 'react';
 import { Todo } from '../../types/todo';
 
 interface TodoPropsContext {
@@ -17,12 +17,14 @@ const TodoContext = createContext<TodoPropsContext>(DEFAULT_VALUE);
 
 const TodoContextProvider: React.FC = ({ children }) => {
   const [todos, setTodos] = useState<TodoPropsContext['todos']>(
-    DEFAULT_VALUE.todos
+    window.electron.store.get('todos') || DEFAULT_VALUE.todos
   );
 
   const addTodo = useCallback<TodoPropsContext['addTodo']>((title) => {
     setTodos((prev) => {
       const newValue = [{ title }, ...prev];
+
+      window.electron.store.set('todos', newValue);
 
       return newValue;
     });
@@ -31,9 +33,9 @@ const TodoContextProvider: React.FC = ({ children }) => {
   const removeTodo = useCallback<TodoPropsContext['removeTodo']>(
     (removeIndex) => {
       setTodos((prev) => {
-        const newValue = prev.filter((todo, index) => removeIndex !== index);
+        const newValue = prev.filter((_todo, index) => removeIndex !== index);
 
-        // store.set('todos', newValue)
+        window.electron.store.set('todos', newValue);
 
         return newValue;
       });

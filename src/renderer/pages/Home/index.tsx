@@ -26,8 +26,8 @@ export const Home = (): JSX.Element => {
       </div>
 
       <div className="mt-4 flex flex-col text-white">
-        {todos.map((todo) => (
-          <div className="flex bg-gray-600 p-2 rounded-full mt-5">
+        {todos.map((todo, index) => (
+          <div key={index} className="flex bg-gray-600 p-2 rounded-full mt-5">
             {todo.title}
           </div>
         ))}

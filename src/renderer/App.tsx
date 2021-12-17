@@ -4,6 +4,18 @@ import './App.css';
 import { GlobalContext } from './contexts';
 import { Home } from './pages';
 
+declare global {
+  interface Window {
+    electron: {
+      store: {
+        get: (key: string) => any;
+        set: (key: string, val: any) => void;
+        // any other methods you've defined...
+      };
+    };
+  }
+}
+
 export default function App() {
   return (
     <div className="w-screen h-screen bg-gray-800 p-5">
