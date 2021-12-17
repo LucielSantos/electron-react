@@ -6,7 +6,9 @@ export const Home = (): JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onClickAdd = () => {
-    inputRef.current && addTodo(inputRef.current.value);
+    if (inputRef.current) {
+      addTodo(inputRef.current.value);
+    }
   };
 
   return (
