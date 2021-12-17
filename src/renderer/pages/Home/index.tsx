@@ -1,8 +1,9 @@
 import { useContext, useRef } from 'react';
 import { TodoContext } from 'renderer/contexts/todo';
+import { FaTrash } from 'react-icons/fa';
 
 export const Home = (): JSX.Element => {
-  const { addTodo, todos } = useContext(TodoContext);
+  const { addTodo, removeTodo, todos } = useContext(TodoContext);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onClickAdd = () => {
@@ -29,8 +30,13 @@ export const Home = (): JSX.Element => {
 
       <div className="mt-4 flex flex-col text-white">
         {todos.map((todo, index) => (
-          <div key={index} className="flex bg-gray-600 p-2 rounded-full mt-5">
+          <div
+            key={index}
+            className="flex items-center justify-between bg-gray-600 p-2 rounded-full mt-5"
+          >
             {todo.title}
+
+            <FaTrash onClick={() => removeTodo(index)} />
           </div>
         ))}
       </div>
