@@ -3,6 +3,7 @@ import 'tailwindcss/tailwind.css';
 import './App.css';
 import { GlobalContext } from './contexts';
 import { Home } from './pages';
+import { Todo } from './types/todo';
 
 declare global {
   interface Window {
@@ -12,6 +13,7 @@ declare global {
         set: (key: string, val: any) => void;
         // any other methods you've defined...
       };
+      saveTodos: (todos: Todo[]) => void;
     };
   }
 }

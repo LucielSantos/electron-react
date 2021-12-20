@@ -24,7 +24,7 @@ const TodoContextProvider: React.FC = ({ children }) => {
     setTodos((prev) => {
       const newValue = [{ title }, ...prev];
 
-      window.electron.store.set('todos', newValue);
+      window.electron.saveTodos(newValue);
 
       return newValue;
     });
@@ -35,7 +35,7 @@ const TodoContextProvider: React.FC = ({ children }) => {
       setTodos((prev) => {
         const newValue = prev.filter((_todo, index) => removeIndex !== index);
 
-        window.electron.store.set('todos', newValue);
+        window.electron.saveTodos(newValue);
 
         return newValue;
       });

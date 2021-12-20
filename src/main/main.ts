@@ -17,6 +17,7 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import Store from 'electron-store';
+import sqlite3 from 'sqlite3';
 
 export default class AppUpdater {
   constructor() {
@@ -148,4 +149,14 @@ ipcMain.on('electron-store-get', (event, val) => {
 
 ipcMain.on('electron-store-set', async (event, key, val) => {
   store.set(key, val);
+});
+
+// SQLite config
+const database = new sqlite3.Database('./public/db.sqlite3', (err) => {
+  if (err) console.error('Database opening error: ', err);
+});
+
+ipcMain.on('save-todo-db', async (event, todos) => {
+  console.log('save-todo-db');
+  console.log(todos);
 });

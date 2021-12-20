@@ -29,4 +29,7 @@ contextBridge.exposeInMainWorld('electron', {
     },
     // Other method you want to add like has(), reset(), etc.
   },
+  saveTodos(todos) {
+    ipcRenderer.send('save-todo-db', todos);
+  },
 });
