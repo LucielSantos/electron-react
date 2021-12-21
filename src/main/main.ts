@@ -17,7 +17,8 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import Store from 'electron-store';
-import sqlite3 from 'sqlite3';
+import Database from '../database/Database';
+import { TodoRepository } from '../database/repositories/todo';
 
 export default class AppUpdater {
   constructor() {
@@ -130,6 +131,7 @@ app
   .whenReady()
   .then(() => {
     createWindow();
+
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
@@ -151,12 +153,17 @@ ipcMain.on('electron-store-set', async (event, key, val) => {
   store.set(key, val);
 });
 
-// SQLite config
-const database = new sqlite3.Database('./public/db.sqlite3', (err) => {
-  if (err) console.error('Database opening error: ', err);
+// Database
+export const database = new Database();
+
+ipcMain.on('save-todo', async (event, todo) => {
+  const todoRepository = new TodoRepository();
+
+  await todoRepository.save(todo);
 });
 
-ipcMain.on('save-todo-db', async (event, todos) => {
-  console.log('save-todo-db');
-  console.log(todos);
+ipcMain.on('get-todos', async (event) => {
+  const todoRepository = new TodoRepository();
+
+  event.returnValue = await todoRepository.getAll();
 });

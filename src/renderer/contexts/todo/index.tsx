@@ -17,14 +17,14 @@ const TodoContext = createContext<TodoPropsContext>(DEFAULT_VALUE);
 
 const TodoContextProvider: React.FC = ({ children }) => {
   const [todos, setTodos] = useState<TodoPropsContext['todos']>(
-    window.electron.store.get('todos') || DEFAULT_VALUE.todos
+    DEFAULT_VALUE.todos
   );
 
   const addTodo = useCallback<TodoPropsContext['addTodo']>((title) => {
     setTodos((prev) => {
       const newValue = [{ title }, ...prev];
 
-      window.electron.saveTodos(newValue);
+      window.electron.saveTodo({ title });
 
       return newValue;
     });
@@ -35,13 +35,25 @@ const TodoContextProvider: React.FC = ({ children }) => {
       setTodos((prev) => {
         const newValue = prev.filter((_todo, index) => removeIndex !== index);
 
-        window.electron.saveTodos(newValue);
+        // window.electron.saveTodos(newValue);
 
         return newValue;
       });
     },
     []
   );
+
+  useEffect(() => {
+    const loadTodos = async () => {
+      const list = await window.electron.getTodos();
+
+      if (!list) return;
+
+      setTodos(list);
+    };
+
+    loadTodos();
+  }, []);
 
   return (
     <TodoContext.Provider value={{ todos, addTodo, removeTodo }}>

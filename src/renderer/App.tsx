@@ -13,7 +13,8 @@ declare global {
         set: (key: string, val: any) => void;
         // any other methods you've defined...
       };
-      saveTodos: (todos: Todo[]) => void;
+      saveTodo: (todo: Todo) => void;
+      getTodos: () => Promise<Todo[]>;
     };
   }
 }

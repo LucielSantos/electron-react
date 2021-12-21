@@ -15,6 +15,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "sqlite3": "^5.0.2"
+    "sqlite3": "^5.0.2",
+    "typeorm": "0.2.41",
+    "reflect-metadata": "0.1.13"
   }
 }
