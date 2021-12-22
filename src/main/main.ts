@@ -19,6 +19,8 @@ import { resolveHtmlPath } from './util';
 import Store from 'electron-store';
 import Database from '../database/Database';
 import { TodoRepository } from '../database/repositories/todo';
+import express from 'express';
+import ip from 'ip';
 
 export default class AppUpdater {
   constructor() {
@@ -75,7 +77,7 @@ const createWindow = async () => {
   };
 
   mainWindow = new BrowserWindow({
-    show: false,
+    show: true,
     width: 1024,
     height: 728,
     icon: getAssetPath('icon.png'),
@@ -90,11 +92,8 @@ const createWindow = async () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
-    } else {
-      mainWindow.show();
-    }
+
+    mainWindow.show();
   });
 
   mainWindow.on('closed', () => {
@@ -166,4 +165,15 @@ ipcMain.on('get-todos', async (event) => {
   const todoRepository = new TodoRepository();
 
   event.returnValue = await todoRepository.getAll();
+});
+
+// Express config
+const expressApp = express();
+
+expressApp.get('/endpoint', (req, res) => {
+  return res.json({ message: 'success', ip: ip.address() });
+});
+
+expressApp.listen(3333, () => {
+  console.log('Express app is running');
 });
