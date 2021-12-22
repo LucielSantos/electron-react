@@ -1,8 +1,9 @@
 import { useContext, useRef } from 'react';
 import { TodoContext } from 'renderer/contexts/todo';
 import { FaTrash } from 'react-icons/fa';
+import { RouteComponentProps } from 'react-router';
 
-export const Home = (): JSX.Element => {
+export const Home = ({ history }: RouteComponentProps): JSX.Element => {
   const { addTodo, removeTodo, todos } = useContext(TodoContext);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -25,6 +26,13 @@ export const Home = (): JSX.Element => {
           onClick={onClickAdd}
         >
           <span className="text-gray-800 font-semibold">Adicionar</span>
+        </button>
+
+        <button
+          className="px-7 rounded-full bg-cyan-400 ml-5 hover:bg-cyan-700"
+          onClick={() => history.push('/config')}
+        >
+          <span className="text-gray-800 font-semibold">Redirect</span>
         </button>
       </div>
 

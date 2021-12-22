@@ -6,18 +6,12 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send('ipc-example', 'ping');
     },
     on(channel, func) {
-      const validChannels = ['ipc-example'];
-      if (validChannels.includes(channel)) {
-        // Deliberately strip event as it includes `sender`
-        ipcRenderer.on(channel, (event, ...args) => func(...args));
-      }
+      // Deliberately strip event as it includes `sender`
+      ipcRenderer.on(channel, (event, ...args) => func(...args));
     },
     once(channel, func) {
-      const validChannels = ['ipc-example'];
-      if (validChannels.includes(channel)) {
-        // Deliberately strip event as it includes `sender`
-        ipcRenderer.once(channel, (event, ...args) => func(...args));
-      }
+      // Deliberately strip event as it includes `sender`
+      ipcRenderer.once(channel, (event, ...args) => func(...args));
     },
   },
   store: {
@@ -27,6 +21,12 @@ contextBridge.exposeInMainWorld('electron', {
     set(property, val) {
       ipcRenderer.send('electron-store-set', property, val);
     },
+    setConfig(configs) {
+      ipcRenderer.send('set-config', configs);
+    },
+    getConfig() {
+      return ipcRenderer.sendSync('get-config');
+    },
     // Other method you want to add like has(), reset(), etc.
   },
   saveTodo(newTodo) {
@@ -34,5 +34,8 @@ contextBridge.exposeInMainWorld('electron', {
   },
   getTodos() {
     return ipcRenderer.sendSync('get-todos');
+  },
+  sendMessage(message) {
+    return ipcRenderer.sendSync('send-message', message);
   },
 });

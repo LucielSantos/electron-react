@@ -13,6 +13,9 @@ module.exports = {
     'import/no-self-import': 'off',
     'import/order': 'off',
     'import/no-cycle': 'off',
+    'react/require-default-props': 'off',
+    'react/jsx-props-no-spreading': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,
