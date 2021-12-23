@@ -2,7 +2,7 @@ import { createConnection, Connection } from 'typeorm';
 import path from 'path';
 import { Todo } from './entity/Todo';
 
-export default class Database {
+export default class DatabaseBuilder {
   public connection: Connection | undefined;
 
   constructor() {

@@ -16,12 +16,11 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import Store from 'electron-store';
-import Database from '../database/Database';
 import { TodoRepository } from '../database/repositories/todo';
-import express from 'express';
-import ip from 'ip';
-import axios, { AxiosInstance } from 'axios';
+import DatabaseBuilder from '../database/Database';
+import ExpressServerBuilder from '../api';
+import ApiBuilder from '../service';
+import Store from 'electron-store';
 
 export default class AppUpdater {
   constructor() {
@@ -32,10 +31,15 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-let api: AxiosInstance | null = null;
 
-// Electron store config
-const store = new Store();
+// Build Database
+export const database = new DatabaseBuilder();
+
+// Build electron store
+export const store = new Store({ name: 'store' });
+
+// Build api
+export const api = new ApiBuilder();
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
@@ -114,6 +118,10 @@ const createWindow = async () => {
     shell.openExternal(url);
   });
 
+  // Build Express server
+  // eslint-disable-next-line
+  new ExpressServerBuilder(mainWindow);
+
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
@@ -145,17 +153,6 @@ app
   })
   .catch(console.log);
 
-function mountApi(configs: { listenerIp: string; listenerPort: string }) {
-  const listenerIp = configs.listenerIp || store.get('listenerIp');
-  const listenerPort = configs.listenerPort || store.get('listenerPort');
-
-  if (listenerIp && listenerPort) {
-    api = axios.create({
-      baseURL: `${listenerIp}:${listenerPort}/`,
-    });
-  }
-}
-
 ipcMain.on('electron-store-get', (event, val) => {
   event.returnValue = store.get(val);
 });
@@ -163,9 +160,6 @@ ipcMain.on('electron-store-get', (event, val) => {
 ipcMain.on('electron-store-set', async (_, key, val) => {
   store.set(key, val);
 });
-
-// Database
-export const database = new Database();
 
 ipcMain.on('save-todo', async (_, todo) => {
   const todoRepository = new TodoRepository();
@@ -177,29 +171,6 @@ ipcMain.on('get-todos', async (event) => {
   const todoRepository = new TodoRepository();
 
   event.returnValue = await todoRepository.getAll();
-});
-
-// Express config
-const expressApp = express();
-
-expressApp.use(express.json());
-
-expressApp.get('/endpoint', (_, res) => {
-  mainWindow?.webContents.send('test-config');
-
-  return res.json({ message: 'success', ip: ip.address() });
-});
-
-expressApp.post('/receive-message', (req, res) => {
-  const { name, text } = req.body;
-
-  mainWindow?.webContents.send('receive-message', { name, text });
-
-  return res.status(200).send();
-});
-
-expressApp.listen(3333, () => {
-  console.log('Express app is running');
 });
 
 // Messages config
@@ -223,7 +194,7 @@ ipcMain.on(
     store.set('listenerIp', config.listenerIp);
     store.set('listenerPort', config.listenerPort);
 
-    mountApi({
+    api.build({
       listenerIp: config.listenerIp,
       listenerPort: config.listenerPort,
     });
@@ -245,7 +216,7 @@ ipcMain.on('send-message', async (event, message: string) => {
   const name = store.get('name');
 
   try {
-    await api?.post('/receive-message', { text: message, name });
+    await api.serverApi.post('/receive-message', { text: message, name });
   } catch (error) {
     console.log(error);
   }

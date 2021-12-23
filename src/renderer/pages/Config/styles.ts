@@ -25,3 +25,10 @@ export const Container = styled.section`
     gap: 1rem;
   }
 `;
+
+export const Header = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+`;

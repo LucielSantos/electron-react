@@ -20,7 +20,11 @@ export const Config = ({ history }: RouteComponentProps): JSX.Element => {
 
   return (
     <Styles.Container>
-      <h1>Configuração inicial</h1>
+      <Styles.Header>
+        <h1>Configuração inicial</h1>
+
+        <Button onClick={() => history.push('/home')}>To home</Button>
+      </Styles.Header>
 
       <form onSubmit={handleSubmit}>
         <h2>Configuração do servidor</h2>
