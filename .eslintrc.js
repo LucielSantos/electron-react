@@ -16,6 +16,7 @@ module.exports = {
     'react/require-default-props': 'off',
     'react/jsx-props-no-spreading': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
+    'no-console': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,
